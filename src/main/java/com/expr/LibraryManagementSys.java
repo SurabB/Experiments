@@ -1,11 +1,17 @@
 package com.expr;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
+
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class LibraryManagementSys {
     private static final int MAX_LENGTH = 3;
-    HashMap<String, Book> book = new HashMap<>();
-    HashMap<String, Customer> customer = new HashMap<>();
+    private final HashMap<String, Book> book = new HashMap<>();
+    private final HashMap<String, Customer> customer = new HashMap<>();
+   private static final BCrypt.Hasher bCrypt=BCrypt.withDefaults();
+    private static final BCrypt.Verifyer verifyer=BCrypt.verifyer();
+    private static final byte BCRYPT_HASH=10;
 
     private class Book {
         String authorName;
@@ -35,11 +41,13 @@ public class LibraryManagementSys {
     private class Customer {
        private final String custName;
         private final String custId;
+        private byte[] password;
          private final List<String> bookId;
 
-        Customer(String custName, String custId) {
+        Customer(String custName, String custId,byte[] password) {
             this.custName = custName;
             this.custId = custId;
+            this.password=password;
             this.bookId = new ArrayList<>();
         }
 
@@ -117,13 +125,15 @@ public class LibraryManagementSys {
         String custName = sc.nextLine();
         System.out.println("enter customer id");
         String custId = sc.nextLine();
-        return new Customer(custName, custId);
+        System.out.println("enter Password");
+        String custPassword = sc.nextLine();
+        return new Customer(custName, custId,custPassword.getBytes(StandardCharsets.UTF_8));
     }
 
     Optional<Customer> customerRegistration(Scanner sc) {
         Customer c = customerInfo(sc);
         if (validateCustomer(c)) {
-            System.out.println("Customer with this id and name already exist.Would you like to login? Type yes or no ");
+            System.out.println("Customer with this id, name already exist.Would you like to login? Type yes or no ");
             String choice = sc.next().toLowerCase();
             if (choice.equals("yes")) {
                 return Optional.of(this.customer.get(c.custId));
@@ -134,18 +144,18 @@ public class LibraryManagementSys {
         }
         if (this.customer.containsKey(c.custId)) {
             System.out.println(
-                    "customer having this id exist but with different name.If you need to change name of customer login as Employer");
-            System.out.println("Registration failed due to invalid name");
+                    "customer having this id already exist. Please select another id");
+            System.out.println("Registration failed.");
             return Optional.empty();
         }
-
+        c.password=bCrypt.hash(BCRYPT_HASH,c.password);
         this.customer.put(c.custId, c);
         System.out.println("registration successful");
         return Optional.empty();
     }
 
     boolean validateCustomer(Customer c) {
-        return this.customer.containsKey(c.custId) && this.customer.get(c.custId).custName.equals(c.custName);
+        return this.customer.containsKey(c.custId) && this.customer.get(c.custId).custName.equals(c.custName)&&verifyer.verify(c.password,this.customer.get(c.custId).password).verified;
     }
 
     Optional<Customer> customerLogin(Scanner sc) {
@@ -325,8 +335,6 @@ public class LibraryManagementSys {
 
         }
     }
-}
-class LibraryMangSys {
     public static void main(String[] args) {
         LibraryManagementSys sy = new LibraryManagementSys();
         Scanner sc = new Scanner(System.in);
@@ -336,3 +344,4 @@ class LibraryMangSys {
 
     }
 }
+
