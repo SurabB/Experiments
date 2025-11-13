@@ -3,8 +3,8 @@ package com.expr;
 import java.util.function.BiFunction;
 class EulerRk2Converter {
     public static void main(String[] args) {
-        //  new Main().rk2(1,2,0.5,(x,y)->(2*y)/x,2);
-        // new Main().euler(0,1,0.1,(x,y)->2*x*y,3);
+        //  new EulerRk2Converter().rk2(1,2,0.5,(x,y)->(2*y)/x,2);
+        // new EulerRk2Converter().euler(0,1,0.1,(x,y)->2*x*y,3);
         new EulerRk2Converter().rk2(1,2,0.25,(x, y)->y+Math.sin(x),2);
         //x0,y0,h,dy/dx,no.of itr
     }
