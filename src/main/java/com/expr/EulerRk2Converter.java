@@ -12,7 +12,7 @@ class EulerRk2Converter {
     public void rk2(double xnow,double ynow,double h,BiFunction<Double,Double,Double>func,int itr){
 
         for(int i=0;i<itr;i++){
-            double ynext=ynow+(h/2)*(func.apply(xnow,ynow)+func.apply(xnow+h,ynow+h*func.apply(ynow,ynow)));
+            double ynext=ynow+(h/2)*(func.apply(xnow,ynow)+func.apply(xnow+h,ynow+h*func.apply(xnow,ynow)));
             ynow=ynext;
             xnow=xnow+h;
             System.out.println("x"+(i+1)+"= "+xnow+ ", y"+(i+1)+ "= "+ynow);
