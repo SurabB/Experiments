@@ -21,6 +21,7 @@ public class EulerRk2Converter {
 //    }
 
     public static  HashMap<Integer, Values> rk2(double xnow,double ynow,double h,BiFunction<Double,Double,Double>func,int itr){
+        //stores values  x and y for each iteration including initial ones
      HashMap<Integer,Values> values=new LinkedHashMap<>(itr);
         for(int i=0;i<=itr;i++){
             double ynext=ynow+(h/2)*(func.apply(xnow,ynow)+func.apply(xnow+h,ynow+h*func.apply(xnow,ynow)));
@@ -28,17 +29,21 @@ public class EulerRk2Converter {
             ynow=ynext;
             xnow=xnow+h;
         }
+        //returns values x and y of each iteration including the initial values.
         return values;
     }
     public  static HashMap<Integer, Values> euler(double xnow, double ynow, double h, BiFunction<Double,Double,Double>func, int itr){
+        //stores values  x and y for each iteration including initial ones
+
         HashMap<Integer,Values> values=new LinkedHashMap<>(itr);
-        for(int i=0;i<itr;i++){
+        for(int i=0;i<=itr;i++){
             double ynext=ynow+h*func.apply(xnow,ynow);
             values.put(i,new Values(xnow,ynow));
             ynow=ynext;
             xnow=xnow+h;
         }
-           return values;
+        //returns values x and y of each iteration including the initial values.
+        return values;
     }
     public static class Values{
         private final double xnow;
